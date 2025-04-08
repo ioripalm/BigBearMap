@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Marker Example</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100%;
+        }
+
+        form {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 99;
+            background: white;
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            width: auto;
+        }
+
+        select, input {
+            padding: 8px;
+            font-size: 14px;
+            width: 180px;
+            margin-bottom: 0;
+        }
+
+        .default-option {
+            color: gray;
+            font-style: italic;
+        }
+
+        input[type="submit"] {
+            width: 120px;
+        }
+    </style>
+    <!-- <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0pDdD3hQ8tFzB_Y0bcNtSA65k_6qJUqg&callback=initMap&libraries=maps,marker&v=beta"></script> -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const markerData = [
+              {
+                lat: -36.86887413708557,
+                lng: 174.78631751395508,
+                title: 'My location A',
+                address: '49 Seaview Road, Remuera, Auckland 1050',
+                message: '欢迎来到位置 A！这里的风景令人叹为观止，是散步和放松的理想地点。',
+                ownerName: 'John Doe',
+                roomCount: '3 Bedrooms, 2 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Remuera'
+              },
+              {
+                  lat: -36.88229544666853,
+                  lng: 174.79964791589137,
+                  title: 'My location B',
+                  address: '16 Saint Vincent Avenue, Remuera, Auckland 1050',
+                  message: '位置 B充满了宁静，适合安静地散步和放松身心。',
+                  ownerName: 'Jane Smith',
+                  roomCount: '2 Bedrooms, 1 Bathroom, 1 Kitchen, 1 Living Room',
+                  location: 'Remuera'
+              },
+              {
+                lat: -36.90619627292173,
+                lng: 174.7036269682104,
+                title: 'My location C',
+                address: '25 Tiverton Road, Avondale, Auckland 0600',
+                message: '这个地方是放松和享受安静时光的完美之选。',
+                ownerName: 'Alice Brown',
+                roomCount: '4 Bedrooms, 3 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Avondale'
+              },
+              {
+                lat: -36.88511499585591,
+                lng: 174.65880286396458,
+                title: 'My location D',
+                address: '235 Hepburn Road, Glendene, Auckland 0602',
+                message: '这里是一个适合享受自然与安静的地方，非常适合散步。',
+                ownerName: 'Bob Johnson',
+                roomCount: '3 Bedrooms, 2 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Glendene'
+              },
+              {
+                lat: -36.820134160313245,
+                lng: 174.6333282541134,
+                title: 'My location E',
+                address: '1A Chardonnay Rise, Henderson, Auckland 0612',
+                message: '这里的环境宁静，是理想的放松胜地，适合轻松散步。',
+                ownerName: 'Charlie Williams',
+                roomCount: '5 Bedrooms, 4 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Henderson'
+              },
+              {
+                lat: -36.88229544666853,
+                lng: 174.79964791589137,
+                title: 'My location F',
+                address: '90 Luckens Road, West Harbour, Auckland 0618',
+                message: '这是一个融合了现代和自然的地方，非常适合散步。',
+                ownerName: 'David Lee',
+                roomCount: '2 Bedrooms, 1 Bathroom, 1 Kitchen, 1 Living Room',
+                location: 'West Harbour'
+              },
+              {
+                lat: -36.8033490409383,
+                lng: 174.7001273451679,
+                title: 'My location G',
+                address: '74 Stott Avenue, Birkdale, Auckland 0626',
+                message: '这里有着迷人的景色，是一个放松和散步的好地方。',
+                ownerName: 'Eva Green',
+                roomCount: '3 Bedrooms, 2 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Birkdale'
+              },
+              {
+                lat: -36.957282788456126,
+                lng: 174.79982563859136,
+                title: 'My location H',
+                address: '6 Pate Crescent, Favona, Auckland 2024',
+                message: '这个位置远离喧嚣，非常适合散步和放松。',
+                ownerName: 'Frank Harris',
+                roomCount: '4 Bedrooms, 3 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Favona'
+              },
+              {
+                lat: -36.96849081242148,
+                lng: 174.85385809132814,
+                title: 'My location I',
+                address: '15 Omana Road, Papatoetoe, Auckland 2025',
+                message: '安静的环境和周围美丽的自然景色，使这里成为理想的散步和放松场所。',
+                ownerName: 'Grace King',
+                roomCount: '2 Bedrooms, 2 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Papatoetoe'
+              },
+              {
+                lat: -36.78712092316761,
+                lng: 174.74275235201625,
+                title: 'My location J',
+                address: '95 Sunnybrae Road, Hillcrest, Auckland 0627',
+                message: '这里有着丰富的自然景观，是个放松身心的好地方。',
+                ownerName: 'Harry Miller',
+                roomCount: '5 Bedrooms, 4 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Hillcrest'
+              },
+              {
+                lat: -36.891022333264054,
+                lng: 174.9103069854793,
+                title: 'My location K',
+                address: '14 Minaret Drive, Bucklands Beach, Auckland 2014',
+                message: '在这个位置，您可以享受平静的散步，远离城市的喧嚣。',
+                ownerName: 'Ivy Moore',
+                roomCount: '3 Bedrooms, 2 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'Bucklands Beach'
+              },
+              {
+                lat: -36.9425691563348,
+                lng: 174.9147670157368,
+                title: 'My location L',
+                address: '6 Eaglemont Drive, East Tāmaki Heights, Auckland 2016',
+                message: '这里环境宜人，适合散步和放松，享受大自然的美丽。',
+                ownerName: 'Jack White',
+                roomCount: '4 Bedrooms, 3 Bathrooms, 1 Kitchen, 1 Living Room',
+                location: 'East Tāmaki Heights'
+              }
+            ];
+            
+            const locationSelect = document.getElementById('location');
+
+            // 提取唯一的location值
+            const locations = [...new Set(markerData.map(item => item.location))];
+
+            // 创建并添加<option>标签到<select>元素
+            locations.forEach(location => {
+                const option = document.createElement('option');
+                option.value = location;
+                option.textContent = location;
+                locationSelect.appendChild(option);
+            });
+
+            window.initMap = function () {
+                const map = new google.maps.Map(document.getElementById("map"), {
+                    center: { lat: -36.896555, lng: 174.787035 },
+                    zoom: 13,
+                    mapId: "ae02ef5297844574",
+                });
+
+                const markers = [];
+
+                markerData.forEach(data => {
+                    const position = { lat: data.lat, lng: data.lng };
+
+                    const marker = new google.maps.marker.AdvancedMarkerElement({
+                        map: map,
+                        position: position,
+                        title: data.title
+                    });
+
+                    const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=300x150&location=${data.lat},${data.lng}&key=AIzaSyA0pDdD3hQ8tFzB_Y0bcNtSA65k_6qJUqg`;
+
+                    const contentString = `
+                        <div style="max-width:300px">
+                          <h2>${data.title}</h2>
+                          <p><strong>Address : </strong>${data.address}</p>
+                          <img src="${streetViewUrl}" alt="Street View of ${data.title}" style="width:100%;margin:8px 0;border-radius:8px;">
+                          <p><strong>Owner : </strong>${data.ownerName}</p>
+                          <p><strong>Project : </strong>${data.roomCount}</p>
+                          <p>${data.message}</p>
+                        </div>
+                    `;
+
+                    const infowindow = new google.maps.InfoWindow({
+                        content: contentString
+                    });
+
+                    marker.addListener("gmp-click", () => {
+                        infowindow.open({
+                            anchor: marker,
+                            map,
+                        });
+                    });
+
+                    markers.push({ marker, location: data.location });
+                });
+
+                document.getElementById('searchButton').addEventListener('click', function () {
+                    const selectedLocation = locationSelect.value;
+
+                    // 清除地图上的所有标记
+                    markers.forEach(item => {
+                        item.marker.setMap(null);
+                    });
+
+                    // 只显示选择的地点的标记
+                    if (selectedLocation) {
+                        markers.forEach(item => {
+                            if (item.location === selectedLocation) {
+                                item.marker.setMap(map);
+                            }
+                        });
+                    }
+                });
+            };
+
+            // 延迟加载 Google Maps API，以确保 initMap 被正确调用
+            const script = document.createElement("script");
+            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyA0pDdD3hQ8tFzB_Y0bcNtSA65k_6qJUqg&callback=initMap&libraries=maps,marker&v=beta";
+            script.async = true;
+            document.body.appendChild(script);
+        });
+    </script>
+</head>
+
+<body>
+    <form onsubmit="handleFormSubmit(event)">
+        <select id="location">
+            <option value="" class="default-option" disabled selected>Location</option>
+        </select>
+        <select id="roomType">
+            <option value="">Rooms</option>
+            <option value="3 Bedrooms">3 Bedrooms</option>
+            <option value="2 Bedrooms">2 Bedrooms</option>
+        </select>
+        <input id="searchButton" type="button" value="搜索">
+    </form>
+    <div id="map"></div>
+</body>
+
+</html>
